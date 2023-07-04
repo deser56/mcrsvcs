@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const path = require('path');
+// const path = require('path');
 const port = 3000;
 const { MongoClient } = require('mongodb');
 
@@ -55,9 +55,9 @@ app.post('/signin', async (req, res) => {
   }
 });
 
-app.get('/', function (req, res) {
+/* app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'templates/index.html'));
-});
+}); */
 
 tryConnect().then(() => {
   app.listen(port, () => {
