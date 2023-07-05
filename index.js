@@ -3,6 +3,7 @@ const app = express();
 // const path = require('path');
 const port = 3000;
 const { MongoClient } = require('mongodb');
+const cors = require('cors');
 
 const connectionString = 'mongodb+srv://wanpatty168:4nQmrFD0KESLfunc@cluster0.45cy7xk.mongodb.net/';
 
@@ -20,6 +21,8 @@ async function tryConnect() {
 }
 
 const collectionName = 'authenticator';
+
+app.use(cors());
 
 app.use(express.json());
 
