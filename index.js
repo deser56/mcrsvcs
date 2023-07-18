@@ -6,6 +6,7 @@ const cors = require('cors');
 const connectionString = 'postgres://deser56:J3dyjXtcTb1E@ep-shiny-cake-336723-pooler.us-east-2.aws.neon.tech/neondb';
 const pool = new Pool({
   connectionString: connectionString,
+  ssl:true
 });
 
 const collectionName = 'authenticator';
