@@ -1,38 +1,22 @@
 const express = require('express');
 const app = express();
-// const path = require('path');
-const port = 3000;
-const { MongoClient } = require('mongodb');
+const { Pool } = require('pg');
 const cors = require('cors');
 
-const connectionString = 'mongodb+srv://wanpatty168:4nQmrFD0KESLfunc@cluster0.45cy7xk.mongodb.net/';
-
-let db;
-
-async function tryConnect() {
-  try {
-    const client = new MongoClient(connectionString);
-    await client.connect();
-    db = client.db('cluster0');
-    console.log('Connected to the database');
-  } catch (e) {
-    console.error('Error connecting to the database:', e);
-  }
-}
+const connectionString = 'postgres://deser56:J3dyjXtcTb1E@ep-shiny-cake-336723-pooler.us-east-2.aws.neon.tech/neondb';
+const pool = new Pool({
+  connectionString: connectionString,
+});
 
 const collectionName = 'authenticator';
 
 app.use(cors());
-
 app.use(express.json());
 
 app.post('/signup', async (req, res) => {
   const { user, pass } = req.body;
   try {
-    await db.collection(collectionName).insertOne({
-      username: user,
-      password: pass,
-    });
+    await pool.query('INSERT INTO ' + collectionName + ' (username, password) VALUES ($1, $2)', [user, pass]);
     res.sendStatus(201);
   } catch (error) {
     console.error('Error signing up:', error);
@@ -43,11 +27,8 @@ app.post('/signup', async (req, res) => {
 app.post('/signin', async (req, res) => {
   const { user, pass } = req.body;
   try {
-    const userFound = await db.collection(collectionName).findOne({
-      username: user,
-      password: pass,
-    });
-    if (userFound) {
+    const result = await pool.query('SELECT * FROM ' + collectionName + ' WHERE username = $1 AND password = $2', [user, pass]);
+    if (result.rowCount > 0) {
       res.sendStatus(200);
     } else {
       res.sendStatus(401);
@@ -58,12 +39,9 @@ app.post('/signin', async (req, res) => {
   }
 });
 
-/* app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'templates/index.html'));
-}); */
-
 tryConnect().then(() => {
   app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
 });
+
