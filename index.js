@@ -39,9 +39,21 @@ app.post('/signin', async (req, res) => {
   }
 });
 
+const port = 3000;
+
+// Function to connect to the database
+async function tryConnect() {
+  try {
+    await pool.connect();
+    console.log('Connected to the database');
+  } catch (e) {
+    console.error('Error connecting to the database:', e);
+  }
+}
+
+// Start the server
 tryConnect().then(() => {
   app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
 });
-
